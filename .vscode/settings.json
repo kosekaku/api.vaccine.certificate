@@ -1,0 +1,8 @@
+{
+  "appService.zipIgnorePattern": [
+    "node_modules{,/**}",
+    ".vscode{,/**}"
+  ],
+  "appService.deploySubpath": "",
+  "appService.defaultWebAppToDeploy": "/subscriptions/2992736f-38d3-4c76-a716-638afb9dd831/resourceGroups/PPMS-UI/providers/Microsoft.Web/sites/ppms-api"
+}
