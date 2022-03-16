@@ -1,8 +1,12 @@
 import axios from 'axios';
-import { auth, authProd } from '../utils/authConfig';
+import { auth, DHIS2_API_BASE_URL } from '../utils/authConfig';
 import { decryptCredential } from '../utils/users';
+import CertificatePrintCount from '../models/CertificatePrintCount';
 import {
+  badRequest,
   notFound,
+  somethingWrongErr,
+  success,
   tryCatchExceptions,
 } from '../helpers/messages';
 
@@ -18,8 +22,8 @@ const getTrackedEntityInstances = async (req, res, next) => {
       uniqueId,
       pageSize,
     } = req.query;
-
-    const urlTEI = `https://southsudanhis.org/covid19southsudan/api/trackedEntityInstances.json?ou=${organizationUnit}&ouMode=DESCENDANTS&program=yDuAzyqYABS&programStage=a1jCssI2LkW&lastUpdatedStartDate=${lastUpdatedStartDate}&lastUpdatedEndDate=${lastUpdatedEndDate}&fields=trackedEntityInstance,attributes[attribute,value],enrollments[program,orgUnit,events[status,enrollmentStatus,eventDate,orgUnitName,programStage,dataValues[dataElement,value]]]&pageSize=${pageSize}&page=`;
+    const { DHIS2_API_BASE_URL: baseUrl } = DHIS2_API_BASE_URL;
+    const urlTEI = `${baseUrl}/api/trackedEntityInstances.json?ou=${organizationUnit}&ouMode=DESCENDANTS&program=yDuAzyqYABS&programStage=a1jCssI2LkW&lastUpdatedStartDate=${lastUpdatedStartDate}&lastUpdatedEndDate=${lastUpdatedEndDate}&fields=trackedEntityInstance,attributes[attribute,value],enrollments[program,orgUnit,events[status,enrollmentStatus,eventDate,orgUnitName,programStage,dataValues[dataElement,value]]]&pageSize=${pageSize}&page=`;
     const response = await axios.get(urlTEI, {
       auth,
     });
@@ -39,4 +43,41 @@ const getTrackedEntityInstances = async (req, res, next) => {
   }
 };
 
-export { getTrackedEntityInstances };
+// moniter prints dashboards
+const certificateStatus = async (req, res, next) => {
+  try {
+    const { uniqueId, fullName, occupation, dob, address } = req.body;
+    if (!uniqueId || !fullName || !occupation || !dob || !address) return badRequest(res);
+    // check if cert already printed else- update as reprints
+    const { rows: data } = await CertificatePrintCount.getPrintCountByUser(
+      uniqueId,
+    );
+    console.log(
+      'middleware check if certificate is printed length>0, printed',
+      data, req.body,
+    );
+    if (data.length !== 0) {
+      const { print_count: printCount } = data[0];
+      const updateData = await CertificatePrintCount.updateCertifcateCount(
+        printCount + 1,
+        new Date(),
+        uniqueId,
+      );
+      if (!updateData) return somethingWrongErr(res);
+      return success(res);
+    }
+    // post data to database and track count as 0
+    req.data = {
+      uniqueId,
+      fullName,
+      occupation,
+      dob,
+      address,
+    };
+    next();
+  } catch (error) {
+    somethingWrongErr(res);
+  }
+};
+
+export { getTrackedEntityInstances, certificateStatus };

@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
 import axios from 'axios';
 import { success, notFound, tryCatchExceptions } from '../helpers/messages';
-import { auth, authProd } from '../utils/authConfig';
+import { auth, DHIS2_API_BASE_URL } from '../utils/authConfig';
 
-const urlDHIS2Facilities = 'https://southsudanhis.org/covid19southsudan/api/33/programs/yDuAzyqYABS/organisationUnits?fields=id, name, level,ancestors[id, name, level] ';
+const { DHIS2_API_BASE_URL: baseUrl } = DHIS2_API_BASE_URL;
+const urlDHIS2Facilities = `${baseUrl}/api/33/programs/yDuAzyqYABS/organisationUnits?fields=id, name, level,ancestors[id, name, level]`;
 
 // get all organization units from dhis2
 const getFacilities = async (req, res) => {
