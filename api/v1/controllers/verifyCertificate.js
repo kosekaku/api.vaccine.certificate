@@ -1,17 +1,16 @@
 import axios from 'axios';
-import { auth, authProd } from '../utils/authConfig';
+import { auth, DHIS2_API_BASE_URL } from '../utils/authConfig';
 import { notFound, success, tryCatchExceptions } from '../helpers/messages';
 
+const { DHIS2_API_BASE_URL: baseUrl } = DHIS2_API_BASE_URL;
 const verifyCertificate = async (req, res) => {
   try {
     // send api request to DHIS2 tei
     const { teiId } = req.params;
-    console.log('CERT PArama', teiId);
-    const verifyURL = `https://southsudanhis.org/covid19southsudan/api/trackedEntityInstances/${teiId}.json?ou=OV9zi20DDXP&ouMode=DESCENDANTS&program=yDuAzyqYABS&programStage=a1jCssI2LkW&lastUpdatedStartDate=2021-08-01&lastUpdatedEndDate=2022-01-19&fields=trackedEntityInstance,attributes[attribute,value],enrollments[program,orgUnit,events[status,enrollmentStatus,eventDate,orgUnitName,programStage,dataValues[dataElement,value]]]&pageSize=1&page=`;
+    const verifyURL = `${baseUrl}/api/trackedEntityInstances/${teiId}.json?ou=OV9zi20DDXP&ouMode=DESCENDANTS&program=yDuAzyqYABS&programStage=a1jCssI2LkW&lastUpdatedStartDate=2021-08-01&lastUpdatedEndDate=2022-01-19&fields=trackedEntityInstance,attributes[attribute,value],enrollments[program,orgUnit,events[status,enrollmentStatus,eventDate,orgUnitName,programStage,dataValues[dataElement,value]]]&pageSize=1&page=`;
     const response = await axios.get(verifyURL, {
       auth,
     });
-
     if (!response) return notFound(res);
     const { status, data } = response;
     // get only vaccination program

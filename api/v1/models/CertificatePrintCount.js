@@ -6,19 +6,18 @@ CREATE TABLE IF NOT EXISTS
 CertificatesPrinted( 
   user_id VARCHAR(100) PRIMARY KEY NOT NULL,
   full_name VARCHAR(150) NOT NULL,
-  occupation VARCHAR(150) UNIQUE NOT NULL,
+  occupation VARCHAR(150) NOT NULL,
   dob VARCHAR(150) NOT NULL,
-  occupdation VARCHAR(150) NOT NULL,
   address VARCHAR(150),
-  print_count VARCHAR(150) DEFAULT 0,
-  printed_on VARCHAR(150) NOT NULL,
-  reprinted_on VARCHAR(150) NOT NULL
+  print_count smallint DEFAULT 0,
+  printed_on VARCHAR(150) ,
+  reprinted_on VARCHAR(150) 
 )
 `;
 
 // excute the query to create the table
 pool.query(userCertificateSchema, (error, results) => {
-  if (error) return console.log(`sorry! cannot create table ${error}`);
+  if (error) return console.log(`sorry! cannot create moniter cert table ${error}`);
   console.log(`Certificate monitering table created ${results}`);
 });
 
@@ -28,37 +27,30 @@ class CertificatePrintCount {
     fullName,
     occupation,
     dob,
-    ocupation,
     address,
-    printCount,
     printedOn,
-    rePrintedOn,
   ) {
     this.userId = userId;
     this.fullName = fullName;
-    this.ocupation = ocupation;
-    this.dob = dob;
     this.occupation = occupation;
+    this.dob = dob;
     this.address = address;
-    this.printCount = printCount;
     this.printedOn = printedOn;
-    this.rePrintedOn = rePrintedOn;
   }
 
-  // create new user account
-  StoreCertificatePrint() {
-    const query = 'INSERT INTO CertificatesPrinted(userId, fullName, occupation, dob, ocupation, address, printCount, printedOn, rePrintedOn';
+  // create new user data for certificate printed
+  storeCertificatePrint() {
+    const query = `INSERT INTO CertificatesPrinted(user_id, full_name, occupation, dob, address, printed_on)
+    VALUES($1, $2, $3, $4, $5, $6) RETURNING user_id, full_name, print_count, printed_on, reprinted_on `;
     const values = [
       this.userId,
       this.fullName,
       this.occupation,
       this.dob,
-      this.occupation,
       this.address,
-      this.printCount,
       this.printedOn,
-      this.rePrintedOn,
     ];
+    console.log('I am inside store fun');
     return pool.query(query, values);
   }
 
@@ -77,17 +69,22 @@ class CertificatePrintCount {
 
   // get all printed certifcate data and do some operation to provide to dashboard
   static getAllPrints() {
-    return pool.query('SELECT * FROM CertificatesPrinted ');
+    return pool.query('SELECT * FROM CertificatesPrinted ORDER BY printed_on DESC ');
   }
 
   // update counts when same user is reprinting the certificate,
   // get cuurent count first before updating
-  static updateCertifcateCount(updatedCount, userId) {
+  static updateCertifcateCount(updatedCount, reprintedOn, userId) {
     const query = `UPDATE CertificatesPrinted 
-    SET print_count=$1,
-    WHERE userId=$2`;
-    const values = [updatedCount, userId];
+    SET print_count=$1, reprinted_on= $2
+    WHERE user_id=$3`;
+    const values = [updatedCount, reprintedOn, userId];
     return pool.query(query, values);
+  }
+  // test cleaning of table
+
+  static deleteTable() {
+    return pool.query('DROP TABLE CertificatesPrinted ');
   }
 }
 
