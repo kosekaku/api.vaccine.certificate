@@ -10,33 +10,36 @@ import {
   tryCatchExceptions,
 } from '../helpers/messages';
 
+import { getTEIURL } from '../Constants/apiURL';
+
 // get all tracked entity instances matching organization unit, dates,
-const getTrackedEntityInstances = async (req, res, next) => {
+const getTEIAttributes = async (req, res, next) => {
   try {
     // send api request to DHIS2
     const {
-      organizationUnit,
-      lastUpdatedStartDate,
-      lastUpdatedEndDate,
-      phone,
-      uniqueId,
-      pageSize,
+      uniqueId, phone, dataOfBirth,
     } = req.query;
-    const { DHIS2_API_BASE_URL: baseUrl } = DHIS2_API_BASE_URL;
-    const urlTEI = `${baseUrl}/api/trackedEntityInstances.json?ou=${organizationUnit}&ouMode=DESCENDANTS&program=yDuAzyqYABS&programStage=a1jCssI2LkW&lastUpdatedStartDate=${lastUpdatedStartDate}&lastUpdatedEndDate=${lastUpdatedEndDate}&fields=trackedEntityInstance,attributes[attribute,value],enrollments[program,orgUnit,events[status,enrollmentStatus,eventDate,orgUnitName,programStage,dataValues[dataElement,value]]]&pageSize=${pageSize}&page=`;
+    let attributeId;
+    let attributeValue;
+
+    if (uniqueId) {
+      attributeId = 'KSr2yTdu1AI';
+      attributeValue = uniqueId;
+    } else {
+      attributeId = 'fctSQp5nAYl';
+      attributeValue = phone;
+      // TODO call api that takes two or more attribute filtering
+    }
+    const urlTEI = getTEIURL(attributeId, attributeValue);
     const response = await axios.get(urlTEI, {
       auth,
     });
     if (!response) return null;
     const { status, data } = response;
     if (status !== 200) return null;
-    // TODO decrypt user credentials phone and unique Id
-    // const encryptedData = ;// uniqueId and phone
-    // const decryptedData = decryptCredential();
-    // if (!decryptCredential) return console.log('Data decryption not successfull', decryptedData);
-    const { trackedEntityInstances } = response.data;
-    if (trackedEntityInstances.length === 0) return notFound(res);
-    req.data = { uniqueId, phone, trackedEntityInstances };
+    const { rows } = data;
+    if (rows.length === 0) return notFound(res);
+    req.data = { teiId: rows[0][0] };
     next();
   } catch (error) {
     return tryCatchExceptions(res, error);
@@ -51,10 +54,6 @@ const certificateStatus = async (req, res, next) => {
     // check if cert already printed else- update as reprints
     const { rows: data } = await CertificatePrintCount.getPrintCountByUser(
       uniqueId,
-    );
-    console.log(
-      'middleware check if certificate is printed length>0, printed',
-      data, req.body,
     );
     if (data.length !== 0) {
       const { print_count: printCount } = data[0];
@@ -80,4 +79,4 @@ const certificateStatus = async (req, res, next) => {
   }
 };
 
-export { getTrackedEntityInstances, certificateStatus };
+export { getTEIAttributes, certificateStatus };

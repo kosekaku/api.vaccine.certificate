@@ -15,10 +15,8 @@ CertificatesPrinted(
 )
 `;
 
-// excute the query to create the table
 pool.query(userCertificateSchema, (error, results) => {
   if (error) return console.log(`sorry! cannot create moniter cert table ${error}`);
-  console.log(`Certificate monitering table created ${results}`);
 });
 
 class CertificatePrintCount {
@@ -50,7 +48,6 @@ class CertificatePrintCount {
       this.address,
       this.printedOn,
     ];
-    console.log('I am inside store fun');
     return pool.query(query, values);
   }
 
@@ -80,11 +77,6 @@ class CertificatePrintCount {
     WHERE user_id=$3`;
     const values = [updatedCount, reprintedOn, userId];
     return pool.query(query, values);
-  }
-  // test cleaning of table
-
-  static deleteTable() {
-    return pool.query('DROP TABLE CertificatesPrinted ');
   }
 }
 

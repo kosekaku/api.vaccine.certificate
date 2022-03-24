@@ -2,9 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import vaccineCertRouter from './api/v1/routes/routes';
 import poeAirportRouter from './api/v1/routes/poeAirport';
+import { hostPort } from './api/v1/utils/authConfig';
 
 const app = express();
-const port = process.env.PORT || 8000;
+const { PORT } = hostPort;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors({
@@ -21,7 +22,7 @@ app.use((req, res) => {
 });
 
 if (!module.parent) {
-  app.listen(port, () => console.log(` App listening on port no: ${port}`));
+  app.listen(PORT || 5000, () => console.log(` App listening on port no: ${PORT}`));
 }
 
 export default app;

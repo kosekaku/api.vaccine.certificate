@@ -15,7 +15,6 @@ CertificatesUsers(
 // excute the query to create the table
 pool.query(userSchema, (error, results) => {
   if (error) return console.log(`sorry! cannot create users table ${error}`);
-  console.log(`Users to monitor certifcates printed table created ${results}`);
 });
 
 class Users {

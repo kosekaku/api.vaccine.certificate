@@ -2,7 +2,7 @@ import uuidV1 from 'uuid/v1';
 import Users from '../models/Users';
 import CertificatePrintCount from '../models/CertificatePrintCount';
 import {
-  generateTokens, hashPassword, veryfyPassword, pagination,
+  generateTokens, hashPassword, veryfyPassword,
 } from '../utils/auth';
 import {
   accessDenied,
@@ -13,7 +13,6 @@ import {
 
 const { DEFAULT_EMAIL, DEFAULT_PASSWORD } = process.env;
 // perform monitering certificates printed here
-// CertificatePrintCount.deleteTable();
 const getPrints = async (req, res) => {
   // get users
   const users = await CertificatePrintCount.getAllPrints();
@@ -36,7 +35,6 @@ const postPrints = async (req, res) => {
   );
   const storeUsers = await users.storeCertificatePrint();
   if (storeUsers.rows === 0) return somethingWrongErr(res); // data not posted
-  console.log('posting prints info', storeUsers.rows);
   return success(res); // don't return data-> success
 };
 
@@ -65,18 +63,13 @@ const login = async (req, res) => {
     const { full_name: fullName, role, password: dbPassword } = user.rows[0];
     // verify password
     const status = await veryfyPassword(password, dbPassword);
-    console.log('SOMETHING......', status);
-
     if (!status) return accessDenied(res);
-    // get some user attributes and send to client
-
     // generate access tokens
     const data = {
       token: generateTokens(email, fullName, role),
     };
     return success(res, data);
   } catch (error) {
-    console.log('some error occured', error.message);
     return somethingWrongErr(res);
   }
 }; // end signin
