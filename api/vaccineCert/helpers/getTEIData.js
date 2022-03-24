@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { auth } from '../utils/authConfig';
-import { getTEIDataURL } from '../Constants/apiURL';
+import { getTEIDataURL } from '../../commons/constants/vaccineCertURL';
 import { notFound, success, tryCatchExceptions } from './messages';
+import { auth } from '../../commons/utils/authConfig';
 
 const TEIData = async (teiId, res) => {
   try {

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { auth, DHIS2_API_BASE_URL } from '../utils/authConfig';
-import { decryptCredential } from '../utils/users';
 import CertificatePrintCount from '../models/CertificatePrintCount';
 import {
   badRequest,
@@ -9,9 +7,8 @@ import {
   success,
   tryCatchExceptions,
 } from '../helpers/messages';
-
-import { getTEIURL } from '../Constants/apiURL';
-
+import { getTEIURL } from '../../commons/constants/vaccineCertURL';
+import { auth } from '../../commons/utils/authConfig';
 // get all tracked entity instances matching organization unit, dates,
 const getTEIAttributes = async (req, res, next) => {
   try {

@@ -3,7 +3,7 @@ import Users from '../models/Users';
 import CertificatePrintCount from '../models/CertificatePrintCount';
 import {
   generateTokens, hashPassword, veryfyPassword,
-} from '../utils/auth';
+} from '../../commons/utils/auth';
 import {
   accessDenied,
   notFound,
