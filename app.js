@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import vaccineCertRouter from './api/v1/routes/routes';
-import poeAirportRouter from './api/v1/routes/poeAirport';
-import { hostPort } from './api/v1/utils/authConfig';
+import vaccineCertRouter from './api/vaccineCert/routes/routes';
+import poeAirportRouter from './api/poe/routes/poeAirport';
+import { hostPort } from './api/commons/utils/authConfig';
 
 const app = express();
 const { PORT } = hostPort;

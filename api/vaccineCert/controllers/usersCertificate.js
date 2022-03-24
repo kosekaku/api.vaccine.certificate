@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import axios from 'axios';
 import { success, notFound, tryCatchExceptions } from '../helpers/messages';
-import { auth } from '../utils/authConfig';
-import { getFacilitiesURL } from '../Constants/apiURL';
+import { auth } from '../../commons/utils/authConfig';
+import { getFacilitiesURL } from '../../commons/constants/vaccineCertURL';
 import { TEIData } from '../helpers/getTEIData';
 
 // get all organization units from dhis2
