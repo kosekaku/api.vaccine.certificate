@@ -1,7 +1,7 @@
 {
-  "name": "api-vaccine-certificat-portal",
+  "name": "api-mediators",
   "version": "1.0.0",
-  "description": "api Covid19 vaccination certificate public printing portal",
+  "description": "api Covid19 vaccination certificate public printing portal, POE mediator",
   "main": "app.js",
   "scripts": {
     "start": "babel-node ./app.js",
@@ -11,7 +11,8 @@
   "keywords": [
     "covid19",
     "vaccine",
-    "certificate"
+    "certificate",
+    "POE"
   ],
   "authors": [
     "Kose"
