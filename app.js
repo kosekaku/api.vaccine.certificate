@@ -1,23 +1,20 @@
 import express from 'express';
 import cors from 'cors';
-import apiRoutes from './api/v1/routes/routes';
-import { DHIS2_APIS, auth } from './api/v1/utils/authConfig';
+import vaccineCertRouter from './api/v1/routes/routes';
+import poeAirportRouter from './api/v1/routes/poeAirport';
+import { hostPort } from './api/v1/utils/authConfig';
 
-console.log('UTILS config', DHIS2_APIS, auth, process.env.PORT);
 const app = express();
-const port = process.env.PORT || 8000;
-// use builtin middlewares
+const { PORT } = hostPort;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-// app.use(cors());
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST'],
 }));
-// Custom middlewares for the app
-app.use('/api/v1/', apiRoutes.router);
+app.use('/api/v1/', vaccineCertRouter.router);
+app.use('/api/v1/poe/', poeAirportRouter.router);
 
-// generic error middleware function
 app.use((req, res) => {
   const error = new Error('Page not found!');
   error.status = 404;
@@ -25,7 +22,7 @@ app.use((req, res) => {
 });
 
 if (!module.parent) {
-  app.listen(port, () => console.log(` App listening on port no: ${port}`));
+  app.listen(PORT || 5000, () => console.log(` App listening on port no: ${PORT}`));
 }
 
 export default app;
