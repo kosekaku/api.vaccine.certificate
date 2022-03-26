@@ -1,13 +1,9 @@
-import { tryCatchExceptions } from '../helpers/messages';
-import { TEIData } from '../helpers/getTEIData';
+import asyncMiddleware from '../middlewares/asyncCalls';
+import { teiEnrollments } from '../helpers/getTEIData';
 
-const verifyCertificate = async (req, res) => {
-  try {
-    const { teiId } = req.params;
-    TEIData(teiId, res);
-  } catch (error) {
-    tryCatchExceptions(res, error);
-  }
-};
+const verifyCertificate = asyncMiddleware(async (req, res) => {
+  const { teiId } = req.params;
+  teiEnrollments(teiId, res);
+});
 
 export { verifyCertificate };

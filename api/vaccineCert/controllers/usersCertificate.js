@@ -1,35 +1,28 @@
 /* eslint-disable max-len */
 import axios from 'axios';
-import { success, notFound, tryCatchExceptions } from '../helpers/messages';
+import { success, notFound } from '../helpers/messages';
 import { auth } from '../../commons/utils/authConfig';
 import { getFacilitiesURL } from '../../commons/constants/vaccineCertURL';
-import { TEIData } from '../helpers/getTEIData';
+import { teiEnrollments } from '../helpers/getTEIData';
+import asyncMiddleware from '../middlewares/asyncCalls';
 
 // get all organization units from dhis2
-const getFacilities = async (req, res) => {
-  try {
-    const url = getFacilitiesURL();
-    const response = await axios.get(url, {
-      auth,
-    });
-    if (!response) return notFound(res);
-    const { status, data } = response;
-    if (status !== 200) return notFound(res);
-    const { organisationUnits } = data;
-    return success(res, organisationUnits);
-  } catch (error) {
-    return tryCatchExceptions(res, error);
-  }
-};
+const getFacilities = asyncMiddleware(async (req, res) => {
+  const url = getFacilitiesURL();
+  const response = await axios.get(url, {
+    auth,
+  });
+  if (!response) return notFound(res);
+  const { status, data } = response;
+  if (status !== 200) return notFound(res);
+  const { organisationUnits } = data;
+  return success(res, organisationUnits);
+});
 
 // get tei events return from middleware
-const getTEIData = async (req, res) => {
-  try {
-    const { teiId } = req.data;
-    TEIData(teiId, res);
-  } catch (error) {
-    tryCatchExceptions(res, error);
-  }
-};
+const getTEIData = asyncMiddleware(async (req, res) => {
+  const { teiId } = req.data;
+  teiEnrollments(teiId, res);
+});
 
 export { getFacilities, getTEIData }; // named exports
