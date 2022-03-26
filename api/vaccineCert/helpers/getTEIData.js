@@ -3,7 +3,7 @@ import { getTEIDataURL } from '../../commons/constants/vaccineCertURL';
 import { notFound, success, tryCatchExceptions } from './messages';
 import { auth } from '../../commons/utils/authConfig';
 
-const TEIData = async (teiId, res) => {
+const teiEnrollments = async (teiId, res) => {
   try {
     const urlTEI = getTEIDataURL(teiId);
     const response = await axios.get(urlTEI, {
@@ -51,4 +51,4 @@ const TEIData = async (teiId, res) => {
   }
 };
 
-export { TEIData };
+export { teiEnrollments };
