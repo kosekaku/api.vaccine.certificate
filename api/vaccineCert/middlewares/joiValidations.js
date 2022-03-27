@@ -1,13 +1,13 @@
-import JOI from 'joi';
+import Joi from 'joi';
 import { joiError } from '../helpers/messages';
 
 const CertifcateAttributesValidate = (req, res, next) => {
-  const schema = {
-    uniqueId: JOI.string().required().label('Unique Vaccination Id'),
-    phone: JOI.string().required().min(9).max(12)
+  const schema = Joi.object({
+    uniqueId: Joi.string().required().label('Unique Vaccination Id'),
+    phone: Joi.string().required().min(9).max(12)
       .label('Phone Number'),
-  };
-  const { error } = JOI.validate(req.query, schema);
+  });
+  const { error } = schema.validate(req.query);
   if (error) return joiError(error, res);
   next();
 };
