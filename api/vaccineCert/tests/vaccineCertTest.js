@@ -11,28 +11,19 @@ const {
 } = data;
 
 describe('Certificate TEI SEARCH /api/v1/teis', () => {
-  describe('GET /teis', () => {
+  describe('GET /teis Unique Id Param', () => {
     const url = '/api/v1/teis';
-    it('should not search TEI when uniqueId field is empty', async () => {
+    it('should not search TEI when both uniqueId and phone number is empty', async () => {
       const res = await chai
         .request(app)
         .get(url)
-        .query({ uniqueId: '', phone });
-
-      expect(res).to.have.status(400);
-    });
-
-    it('should not  search TEI when phone number field is empty', async () => {
-      const res = await chai
-        .request(app)
-        .get(url)
-        .query({ uniqueId, phone: '' });
+        .query({ uniqueId: '', phone: '' });
       expect(res).to.have.status(400);
     });
 
     it('should not  search TEI when phone number length is less than 9', async () => {
       const res = await chai.request(app).get(url).query({
-        uniqueId,
+        uniqueId: '',
         phone: phoneLess,
       });
 
@@ -41,14 +32,22 @@ describe('Certificate TEI SEARCH /api/v1/teis', () => {
 
     it('should not  search TEI when phone number length is more than 12', async () => {
       const res = await chai.request(app).get(url).query({
-        uniqueId,
+        uniqueId: '',
         phone: phoneMore,
       });
 
       expect(res).to.have.status(400);
     });
 
-    it('should not  search TEI when phone number and Unique ID is wrong', async () => {
+    it('should not send TEI data when phone number is wrong and Id is empty', async () => {
+      const res = await chai
+        .request(app)
+        .get(url)
+        .query({ uniqueId: '', phone: phoneWrong });
+      expect(res).to.have.status(404);
+    });
+
+    it('should not  send TEI data when phone number and Unique ID is wrong', async () => {
       const res = await chai.request(app).get(url).query({
         uniqueId: uniqueIdWrong,
         phone: phoneWrong,
@@ -56,7 +55,7 @@ describe('Certificate TEI SEARCH /api/v1/teis', () => {
       expect(res).to.have.status(404);
     });
 
-    it('should search TEI when phone number or Unique ID is valid', async () => {
+    it('should send TEI data when phone number or Unique ID is valid', async () => {
       const res = await chai
         .request(app)
         .get(url)
