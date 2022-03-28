@@ -15,6 +15,7 @@ const getTEIAttributes = async (req, res, next) => {
   try {
     // send api request to DHIS2
     const { uniqueId, phone, dataOfBirth } = req.query;
+    let teiIdData;
     let attributeId;
     let attributeValue;
     if (uniqueId) {
@@ -31,11 +32,24 @@ const getTEIAttributes = async (req, res, next) => {
     });
     if (!response) return null;
     const { status, data } = response;
-    if (status !== 200) return null;
+    if (status !== 200) return somethingWrongErr(res);
     const { rows } = data;
-    if (rows.length === 0) return notFound(res);
-    req.data = { teiId: rows[0][0] };
-    next();
+    if (rows.length === 0) {
+      const url = getTEIURL('fctSQp5nAYl', phone);
+      const responsePhone = await axios.get(url, {
+        auth,
+      });
+      if (!responsePhone) return notFound(res);
+      const { status: statusPhone, data: dataPhone } = responsePhone;
+      if (statusPhone !== 200) return somethingWrongErr(res);
+      const { rows: rowsPhone } = dataPhone;
+      if (rowsPhone.length === 0) return notFound(res);
+      req.dataPhone = { teiId: rowsPhone[0][0] };
+      next();
+    } else {
+      req.data = { teiId: rows[0][0] };
+      next();
+    }
   } catch (error) {
     return tryCatchExceptions(res, error);
   }
@@ -48,7 +62,7 @@ const certificateStatus = async (req, res, next) => {
     if (!uniqueId || !fullName || !occupation || !dob || !address) { return badRequest(res); }
     // check if cert already printed else- update as reprints
     const { rows: data } = await CertificatePrintCount.getPrintCountByUser(
-      uniqueId
+      uniqueId,
     );
     if (data.length !== 0) {
       const { print_count: printCount } = data[0];

@@ -12,6 +12,7 @@ const teiEnrollments = async (teiId, res) => {
     if (!response) return notFound(res);
     const { attributes, enrollments } = response.data;
     if (!enrollments.length) return notFound(res);
+    let dataResponse;
     enrollments.map(
       ({ program, status, enrollmentStatus, events }, indexTei) => {
         // get users enrolled to only vaccine program
@@ -38,14 +39,14 @@ const teiEnrollments = async (teiId, res) => {
           return notFound(res); // no events
         }
         // filtered results to sent to client
-        const data = {
+        dataResponse = {
           teiId,
           attributes,
           enrollments: filteredEvents,
         };
-        success(res, data);
       },
     );
+    success(res, dataResponse);
   } catch (error) {
     return tryCatchExceptions(res, error);
   }

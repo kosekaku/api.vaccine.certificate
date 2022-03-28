@@ -21,8 +21,10 @@ const getFacilities = asyncMiddleware(async (req, res) => {
 
 // get tei events return from middleware
 const getTEIData = asyncMiddleware(async (req, res) => {
-  const { teiId } = req.data;
-  teiEnrollments(teiId, res);
+  const teiIdUnique = req.data;
+  const teiIdPhone = req.dataPhone;
+  if (teiIdUnique) return teiEnrollments(teiIdUnique.teiId, res);
+  return teiEnrollments(teiIdPhone.teiId, res);
 });
 
 export { getFacilities, getTEIData }; // named exports

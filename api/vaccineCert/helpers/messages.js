@@ -5,8 +5,6 @@ const tryCatchExceptions = (res, error) => {
 };
 
 const success = (res, data) => {
-  res.set('Access-Control-Allow-Origin', '*'); // allow cors, updated 21/09/2020
-
   res.status(200).json({ status: 200, message: 'Operation successful', data });
 };
 
