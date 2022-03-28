@@ -18,7 +18,7 @@ const teiEnrollments = async (teiId, res) => {
         // get users enrolled to only vaccine program
         if (program !== 'yDuAzyqYABS') return notFound(res);
         if (!events.length) return notFound(res);
-        const filteredEvents = events.map(
+        const filteredEvents = events.filter(
           (
             {
               status,
@@ -35,6 +35,7 @@ const teiEnrollments = async (teiId, res) => {
             }
           },
         ); // end filter events
+
         if (!filteredEvents || filteredEvents.length === 0) {
           return notFound(res); // no events
         }
