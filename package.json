@@ -4,7 +4,8 @@
   "description": "api Covid19 vaccination certificate public printing portal, POE mediator",
   "main": "app.js",
   "scripts": {
-    "start": "babel-node ./app.js",
+    "build": "babel ./app.js -d build && babel ./api -d build/api",
+    "start": "node ./build/app.js",
     "startWithnodemon": "nodemon --exec babel-node ./app.js",
     "test": "mocha --require @babel/register ./api/vaccineCert/tests --timeout 10000",
     "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
