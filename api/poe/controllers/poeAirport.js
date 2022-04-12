@@ -29,7 +29,6 @@ const getFacilities = async (req, res) => {
 const getVisitor = async (req, res) => {
   try {
     const { visitorHistoryId } = req.data;
-    console.log(visitorHistoryId);
     const url = getEventURL(visitorHistoryId);
     const results = await http.get(url, { auth });
     if (!results.data) return notFound(res);
@@ -79,11 +78,13 @@ const postVistor = async (req, res) => {
       animalContact,
       signsSymptoms,
       signsSymptomsSelected,
+      measuredTemperature,
     } = req.body;
+    const captalizaFirstLetter = (data) => `${data.charAt(0).toUpperCase()}${data.slice(1)}`;
     const dataValues = [
       { dataElement: 'YCHZU8pxHLI', value: firstName }, // firstName
       { dataElement: 'gms6oEPUk7D', value: lastName }, // last name
-      { dataElement: 'MQ1WrfzMvbE', value: nationality }, // nationality
+      { dataElement: 'MQ1WrfzMvbE', value: nationality === 'SS' ? 'SSD' : 'Non-SSD' }, // nationality
       { dataElement: 'v5KB4meGBFe', value: passportId }, // passport number
       { dataElement: 'Rcs5V3Xsloq', value: issuingCountry }, // passport issueing country
       { dataElement: 'Pe3CHmZicqT', value: age }, // date of birth / age
@@ -100,12 +101,12 @@ const postVistor = async (req, res) => {
       { dataElement: 'KhAl7eY8tdX', value: countryVisited1 }, // 1st Country Visited in Last 21 days
       { dataElement: 'AOg1wewJiRE', value: countryVisited2 }, // 2nd Country Visited in Last 21 days
       { dataElement: 'Xak52XWejN2', value: countryVisited3 }, // 3rd Country Visited in Last 21 days
-      { dataElement: 'S6Gct1kOGKh', value: ebolaContact }, // In the Past 21 days, Have You had Contact With a Suspected or Confirmed Ebola Case
-      { dataElement: 'wCjASq6bH2C', value: covidContact }, // In the Past 14 days, Have You had Contact with a Suspect or Confirmed Case of the COVID19
-      { dataElement: 'weTF1HjA6o1', value: animalContact }, // In the Past 21 days, Have You had Contact With a Sick or Dead Animal?
-      { dataElement: 'JGnHr6WI3AY', value: signsSymptoms }, // Sign/Symptoms Present (when selected yes to Any signs or symptoms? Below objects are displayed)
+      { dataElement: 'S6Gct1kOGKh', value: captalizaFirstLetter(ebolaContact) }, // In the Past 21 days, Have You had Contact With a Suspected or Confirmed Ebola Case
+      { dataElement: 'wCjASq6bH2C', value: captalizaFirstLetter(covidContact) }, // In the Past 14 days, Have You had Contact with a Suspect or Confirmed Case of the COVID19
+      { dataElement: 'weTF1HjA6o1', value: captalizaFirstLetter(animalContact) }, // In the Past 21 days, Have You had Contact With a Sick or Dead Animal?
+      { dataElement: 'JGnHr6WI3AY', value: captalizaFirstLetter(signsSymptoms) }, // Sign/Symptoms Present (when selected yes to Any signs or symptoms? Below objects are displayed)
       // { dataElement: 'EWZcuvPOrJF', value: 'true' }, // Sign/Symptoms Fever
-      // { dataElement: 'BH5SRLl5PfH', value: '36' }, // Temperature(when selected true to fever )
+      { dataElement: 'BH5SRLl5PfH', value: measuredTemperature }, // Temperature(when selected true to fever )
       // { dataElement: 'JRQbs8iwbj0', value: 'true' }, // Unexplained bleeding
       // { dataElement: 'HahhmzRvwu8', value: 'true' }, // Sign/Symptoms muscle pain
       // { dataElement: 'iUEwXfg9CgD', value: 'true' }, // Sign/Symptoms headache
@@ -153,8 +154,8 @@ const postVistor = async (req, res) => {
 // verify visitor data when they
 const verifyVisitor = async (req, res) => {
   try {
-    const { visitorId } = req.query;
-    const url = getEventURL(visitorId);
+    const { visitId } = req.query; // event Id-> visits id
+    const url = getEventURL(visitId);
     const results = await http.get(url, { auth });
     if (!results.data) return notFound(res);
     const { orgUnit, orgUnitName, eventDate, dataValues } = results.data;
