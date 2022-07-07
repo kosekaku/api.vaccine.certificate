@@ -12,10 +12,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://ui-vaccine-cert-app.herokuapp.com',
     methods: ['GET', 'POST'],
   }),
 );
+
 app.use('/api/v1/', vaccineCertRouter.router);
 app.use('/api/v1/poe/', poeAirportRouter.router);
 
@@ -31,7 +32,8 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 if (!module.parent) {
-  app.listen(PORT || 5000, () => console.log(` App listening on port no: ${PORT}`)
+  app.listen(PORT || 5000, () =>
+    console.log(` App listening on port no: ${PORT}`)
   );
 }
 

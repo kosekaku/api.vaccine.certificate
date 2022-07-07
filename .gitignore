@@ -12,3 +12,5 @@ Procfile
 .coveralls.yml
 .deployment
 .github
+build/
+lib/
