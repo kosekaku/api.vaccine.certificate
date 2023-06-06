@@ -12,7 +12,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: 'https://ui-vaccine-cert-app.herokuapp.com',
+    origin: [
+      'https://ui-vaccine-cert-app.herokuapp.com',
+      'https://covac-ssd.vercel.app',
+    ],
     methods: ['GET', 'POST'],
   })
 );
