@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import vaccineCertRouter from './api/vaccineCert/routes/routes';
 import poeAirportRouter from './api/poe/routes/poeAirport';
+import metadataRouter from './api/SystemScripts/app';
 import { hostPort } from './api/commons/utils/authConfig';
 import errorHandler from './api/vaccineCert/middlewares/error';
 
@@ -11,7 +12,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: 'https://ui-vaccine-cert-app.herokuapp.com',
+    origin: [
+      'https://ui-vaccine-cert-app.herokuapp.com',
+      'https://covac-ssd.vercel.app',
+    ],
     methods: ['GET', 'POST'],
   })
 );
@@ -19,6 +23,8 @@ app.use(
 app.use('/api/v1/', vaccineCertRouter.router);
 app.use('/api/v1/poe/', poeAirportRouter.router);
 
+// scripts- routes
+app.use('/api/scripts/metadata/', metadataRouter.router);
 app.use((req, res) => {
   const error = new Error('Page not found!');
   error.status = 404;

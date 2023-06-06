@@ -34,7 +34,8 @@ if (NODE_ENV === 'development') {
   };
 
   apiURLs = {
-    DHIS2_API_BASE_URL: 'https://southsudanhis.org/covid19southsudan',
+    // DHIS2_API_BASE_URL: 'https://southsudanhis.org/covid19southsudan',
+    DHIS2_API_BASE_URL: 'https://hisptz.com/southsudan',
     DHIS2_API_URL_OU_DEV,
     DHIS2_API_URL_TEI_DEV,
     DHIS2_API_URL_TEI_VERIFY_DEV,
@@ -44,10 +45,10 @@ if (NODE_ENV === 'development') {
     username: DHIS2_API_USERNAME_DEV,
     password: DHIS2_API_PASSWORD_DEV,
   };
-}
-else {
+} else {
   apiURLs = {
-    DHIS2_API_BASE_URL: 'https://southsudanhis.org',
+    // DHIS2_API_BASE_URL: 'https://southsudanhis.org',
+    DHIS2_API_BASE_URL: 'https://hisptz.com/southsudan',
     DHIS2_API_URL_OU,
     DHIS2_API_URL_TEI,
     DHIS2_API_URL_TEI_VERIFY,
